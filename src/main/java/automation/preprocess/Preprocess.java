@@ -11,7 +11,8 @@ public class Preprocess {
     public static WebDriver setupWebDriverWrapper() {
         WebDriverWrapper wrapper = WebDriverWrapper.getInstance();
         wrapper.setPageLoadTimeoutInSec(30);
-        wrapper.addRemoteNode("local", "http://10.60.80.69:4040/wd/hub");
+        //wrapper.addRemoteNode("local", "http://10.60.80.69:4040/wd/hub");
+        wrapper.addRemoteNode("local", "http://localhost:4040/wd/hub");
         wrapper.addRemoteNode("remote", "http://10.60.91.40:4040/wd/hub");
         return wrapper.getInstance().getWebDriver(
                 PropertiesTool.getProperty("environment", "browser"),

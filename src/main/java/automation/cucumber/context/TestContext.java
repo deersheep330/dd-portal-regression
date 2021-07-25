@@ -11,7 +11,6 @@ public class TestContext {
     private String buildNum;
     private WebDriver driver;
     private MainPage mainPage;
-    private EmailPage emailPage;
     private Background background;
 
     private TestContext() {
@@ -27,12 +26,10 @@ public class TestContext {
     public WebDriver getDriver() { return driver; }
     public MainPage getMainPage() { return mainPage; }
     public Background getBackground() { return background; }
-    public EmailPage getEmailPage() { return emailPage; }
 
     public void setBuildNum(String buildNum) { this.buildNum = buildNum; }
     public void setDriver(WebDriver driver) { this.driver = driver; }
     public void setMainPage(MainPage mainPage) { this.mainPage = mainPage; }
     public void setBackground(Background background) { this.background = background; }
-    public void setEmailPage(EmailPage emailPage) { this.emailPage = emailPage; }
 
 }

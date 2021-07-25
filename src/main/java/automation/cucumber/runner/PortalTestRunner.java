@@ -34,7 +34,7 @@ public class PortalTestRunner {
         Background background = new Background() {
             @Override
             public boolean isMet() {
-                if (mainPage != null && mainPage.alreadyLogin() && mainPage.isDeclarationStatusActive()) return true;
+                if (mainPage != null) return true;
                 return false;
             }
         };
@@ -50,7 +50,6 @@ public class PortalTestRunner {
     @AfterClass
     public static void tearDown() {
         if (TestContext.getInstance().getMainPage() != null) {
-            TestContext.getInstance().getMainPage().logout();
             TestContext.getInstance().getDriver().quit();
         }
 
