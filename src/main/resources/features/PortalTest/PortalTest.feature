@@ -5,3 +5,5 @@ Background: On DD Portal
 
 Scenario: Test Portal
     Given on dd portal
+    Then login
+    Then logout

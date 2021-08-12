@@ -61,10 +61,13 @@ task setupEnv(type: WriteProperties) {
     String browserVar = project.hasProperty('browser') ? browser : 'Chrome'
     String envVar = project.hasProperty('env') ? env : 'UAT'
     String machineVar = project.hasProperty('machine') ? machine : 'remote'
+    String accountVar = project.hasProperty('account') ? account : 'account_email'
+    String passwordVar = project.hasProperty('password') ? password : 'account_password'
 
     println '==> Test Browser: ' + browserVar
     println '==> Test Environment: ' + envVar
     println '==> Test Machine: ' + machineVar
+    println '==> Test account: ' + accountVar
 
     def propertiesFilePath = 'src/main/resources/environment.properties'
     def propFile
@@ -77,6 +80,8 @@ task setupEnv(type: WriteProperties) {
     property('browser', browserVar)
     property('env', envVar)
     property('machine', machineVar)
+    property('account', account)
+    property('password', password)
     setOutputFile(propFile)
     writeProperties()
 
