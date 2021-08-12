@@ -36,13 +36,8 @@ public class MainPage extends BasePage {
                 break;
         }
 
-        // change lang from dd page
         addElement("ChangeLang", "//*[@class='lang']");
         addElement("EnglishLang", "//*[@class='lang-option' and contains(text(), 'English')]");
-
-        // change lang from ps page
-        //addElement("ChangeLang2", "//*[contains(@class, 'lang')]//*[contains(@class, 'dropdown-toggle')]");
-        //addElement("EnglishLang2", "//*[contains(@class, 'lang')]//*[contains(text(), 'English')]");
 
         addElement("LoginButton", "(//*[@i18n-txt='login' or @i18n-txt='system.login'])[1]");
         addElement("LoginForm", "//*[@class='login-box']");
@@ -55,6 +50,28 @@ public class MainPage extends BasePage {
         addElement("DDLogo", "//*[@class='logo__DD']");
         addElement("PortalIndicator", "//*[contains(@i18n-txt, 'dd.portal.left.portal')]");
 
+        addElement("MainCategory", "//*[contains(@i18n-txt, 'dd.portal.industryame')]");
+        addElement("SubCategory", "//*[contains(@i18n-txt, 'dd.portal.industrytype.')]");
+
+        addElement("UltimateParent", "//*[contains(@class, 'collapse') and contains(@class, 'show')]//*[contains(@class, 'ultimateParent')]");
+        addElement("CompanyList", "//*[contains(@class, 'portalCompanyList__column--rank')]/label[contains(text(), '.')]");
+        addElement("CollapseButton", "//*[contains(@class, 'portalCompanyList__column--collapseIcon')]//*[name()='svg']");
+
+        addElement("RankingSelect", "//*[contains(@class, 'portalSelector')]//select");
+        // value = categoryPatentCount
+        // value = activePatentCount
+        // value = highValuePatentCount
+        // value = recentlyAppliedPatentCount
+
+        addElement("FilterButton", "//*[contains(@class, 'portalFilterButton')]//*[contains(@i18n-txt, 'due.chartcommon.filter')]");
+        addElement("ParentCompany", "//form//label[contains(text(), 'Parent company')]");
+        addElement("Subsidiary", "//form//label[contains(text(), 'Subsidiary')]");
+        addElement("IndependentCompany", "//form//label[contains(text(), 'Independent company')]");
+        addElement("SEPOwner", "//form//label[contains(text(), 'SEP Owner')]");
+        addElement("3GPPMember", "//form//label[contains(text(), '3GPP Member')]");
+        addElement("LargerThanZero", "//form//label[contains(text(), '>0%')]");
+        addElement("LargerThanTwentyFive", "//form//label[contains(text(), '>25%')]");
+        addElement("ClearPercentage", "//form//span[contains(@i18n-txt, 'due.chart.clear') and not(contains(@style, 'none'))]");
     }
 
     @Override
