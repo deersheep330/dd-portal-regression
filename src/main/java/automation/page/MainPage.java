@@ -63,6 +63,8 @@ public class MainPage extends BasePage {
         // value = highValuePatentCount
         // value = recentlyAppliedPatentCount
 
+        addElement("RankingNumbers", "//*[contains(@class, 'portalCompanyList__body--dynamic')]/div/*[contains(@class, 'portalCompanyList__row')]//*[contains(@class, 'portalCompanyList__column')][1]");
+
         addElement("FilterButton", "//*[contains(@class, 'portalFilterButton')]//*[contains(@i18n-txt, 'due.chartcommon.filter')]");
         addElement("ParentCompany", "//form//label[contains(text(), 'Parent company')]");
         addElement("Subsidiary", "//form//label[contains(text(), 'Subsidiary')]");
@@ -72,6 +74,22 @@ public class MainPage extends BasePage {
         addElement("LargerThanZero", "//form//label[contains(text(), '>0%')]");
         addElement("LargerThanTwentyFive", "//form//label[contains(text(), '>25%')]");
         addElement("ClearPercentage", "//form//span[contains(@i18n-txt, 'due.chart.clear') and not(contains(@style, 'none'))]");
+        addElement("FilterSubmit", "//*[contains(@i18n-txt, 'due.button.submit') and contains(@class, 'portalFilterButton')]");
+
+        addElement("CompanyTabShow", "//*[@id='accordion-1-detail-table' and not(contains(@style, 'none'))]");
+        addElement("SampleReportTabShow", "//*[@id='accordion-2-detail-table' and not(contains(@style, 'none'))]");
+        addElement("CompanyTabToggle", "(//*[contains(@class, 'portalCompanyCollapaseBlock__header__title')])[1]");
+        addElement("SampleReportTabToggle", "(//*[contains(@class, 'portalCompanyCollapaseBlock__header__title')])[2]");
+
+        addElement("ViewReport", "//*[contains(text(), 'View Report')]");
+
+        addElement("Categories", "//*[contains(@class, 'portalCompanyDetailTable__button')]");
+
+        addElement("MainLabelNumbers", "//*[contains(@class, 'portalNumberLabel__number')]");
+        addElement("SubLabelNumbers", "//*[contains(@class, 'portalDescription__number')]");
+        addElement("FieldLabelNumbers", "//*[contains(@class, 'portalTechField__number')]");
+
+        addElement("SampleReports", "//*[contains(@class, 'portalSampleReport__link')]");
     }
 
     @Override
