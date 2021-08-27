@@ -55,7 +55,7 @@ public class MainPage extends BasePage {
 
         addElement("UltimateParent", "//*[contains(@class, 'collapse') and contains(@class, 'show')]//*[contains(@class, 'ultimateParent')]");
         addElement("CompanyList", "//*[contains(@class, 'portalCompanyList__column--rank')]/label[contains(text(), '.')]");
-        addElement("CollapseButton", "//*[contains(@class, 'portalCompanyList__column--collapseIcon')]//*[name()='svg']");
+        addElement("CollapseButton", "//*[contains(@class, 'portalCompanyList__column--collapseIcon')]//span[not(contains(@style, 'none'))]//*[name()='svg']");
 
         addElement("RankingSelect", "//*[contains(@class, 'portalSelector')]//select");
         // value = categoryPatentCount
@@ -90,6 +90,10 @@ public class MainPage extends BasePage {
         addElement("FieldLabelNumbers", "//*[contains(@class, 'portalTechField__number')]");
 
         addElement("SampleReports", "//*[contains(@class, 'portalSampleReport__link')]");
+
+        addElement("SearchInput", "//*[contains(@class, 'companySearch__input')]");
+        addElement("SearchSubmit", "//*[contains(@class, 'companySearch__icon')]//*[name()='svg' and contains(@class, 'fa-search')]");
+        addElement("GoToPartySearch", "//*[contains(@i18n-txt, 'dd.portal.button.patentsearch')]");
     }
 
     @Override
