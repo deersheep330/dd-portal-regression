@@ -80,8 +80,8 @@ task setupEnv(type: WriteProperties) {
     property('browser', browserVar)
     property('env', envVar)
     property('machine', machineVar)
-    property('account', account)
-    property('password', password)
+    property('account', accountVar)
+    property('password', passwordVar)
     setOutputFile(propFile)
     writeProperties()
 

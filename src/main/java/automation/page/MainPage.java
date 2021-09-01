@@ -39,8 +39,8 @@ public class MainPage extends BasePage {
         addElement("ChangeLang", "//*[@class='lang']");
         addElement("EnglishLang", "//*[@class='lang-option' and contains(text(), 'English')]");
 
-        addElement("LoginButton", "(//*[@i18n-txt='login' or @i18n-txt='system.login'])[1]");
-        addElement("LoginForm", "//*[@class='login-box']");
+        addElement("LoginButton", "(//*[@i18n-txt='login' or @vue-i18n-txt='login' or @i18n-txt='system.login' or @vue-i18n-txt='system.login'])[1]");
+        addElement("LoginForm", "//*[contains(@class, 'login-box')]");
         addElement("LoginName", "//input[@id='signName']");
         addElement("LoginPassword", "//input[@id='signPass']");
         addElement("LoginSubmit", "//*[contains(@class, 'modal-body') or contains(@class, 'login-box')]//*[text()='Sign In']");
