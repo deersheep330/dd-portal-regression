@@ -8,18 +8,37 @@ Feature: Portal Test
         Then click first company
         Then view report
 
+    Scenario: Test First Company All Fields
+        Given on dd portal
+        Then click first company
+        Then view all fields report
+
     Scenario: Test First Ultimate Parent
         Given on dd portal
         Then click first ultimate parent
         Then view report
+
+    Scenario: Test First Ultimate Parent All Fields
+        Given on dd portal
+        Then click first ultimate parent
+        Then view all fields report
 
     Scenario: Test Last Company
         Given on dd portal
         Then click last company
         Then view report
 
+    Scenario: Test Last Company All Fields
+        Given on dd portal
+        Then click last company
+        Then view all fields report
+
     Scenario: Test Last Ultimate Parent
         Given on dd portal
         Then click last ultimate parent
         Then view report
-        
+
+    Scenario: Test Last Ultimate Parent All Fields
+        Given on dd portal
+        Then click last ultimate parent
+        Then view all fields report

@@ -40,4 +40,7 @@ public class MainPageSteps extends BaseSteps {
     @Then("view report")
     public void view_report() { mainPage.viewReport(); }
 
+    @Then("view all fields report")
+    public void view_all_fields_report() { mainPage.viewAllFieldsReport(); }
+
 }

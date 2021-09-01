@@ -87,6 +87,7 @@ public class MainPage extends BasePage {
         addElement("SampleReportTabToggle", "(//*[contains(@class, 'portalCompanyCollapaseBlock__header__title')])[2]");
 
         addElement("ViewReport", "//*[contains(text(), 'View Report')]");
+        addElement("AllFields", "//*[contains(@class, 'portalCompanyDetailTable') and contains(text(), 'All fields')]");
         addElement("ReportTitle", "//*[@id='dummy-header-title']");
 
         addElement("Categories", "//*[contains(@class, 'portalCompanyDetailTable__button')]");
@@ -156,6 +157,11 @@ public class MainPage extends BasePage {
     }
 
     public void viewReport() {
+        op.clickAndWait(getElement("ViewReport"), getElement("ReportTitle"));
+    }
+
+    public void viewAllFieldsReport() {
+        op.click(getElement("AllFields"));
         op.clickAndWait(getElement("ViewReport"), getElement("ReportTitle"));
     }
 
