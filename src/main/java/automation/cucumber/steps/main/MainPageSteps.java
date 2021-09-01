@@ -25,6 +25,18 @@ public class MainPageSteps extends BaseSteps {
         mainPage.logout();
     }
 
+    @Then("rank by valid patents")
+    public void rank_by_valid_patents() { mainPage.rankByValidPatents(); }
+
+    @Then("rank by high value patents")
+    public void rank_by_high_value_patents() { mainPage.rankByHighValuePatents(); }
+
+    @Then("rank by patents filed")
+    public void rank_by_patents_filed() { mainPage.rankByPatentsFiled(); }
+
+    @Then("rank by patents")
+    public void rank_by_patents() { mainPage.rankByPatents(); }
+
     @Then("click first company")
     public void click_first_company() { mainPage.clickFirstCompany(); }
 

@@ -7,15 +7,15 @@ import deersheep.automation.utility.PropertiesTool;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class MainPage extends BasePage {
 
     protected int defaultWaitTimeoutInSec = 120;
 
     protected String domain = "";
+
+    protected int numberOfCompanies = -1;
 
     protected int numberOfPatents = -1;
     protected List<Integer> patentAssetsSummaryNumbers;
@@ -28,19 +28,19 @@ public class MainPage extends BasePage {
         switch (Utility.getEnv()) {
             case "UAT":
                 url = "https://uat.patentcloud.com/dd/portal";
-                domain = "https://uat.patentcloud.com/";
+                domain = "https://uat.patentcloud.com";
                 break;
             case "SIT":
                 url = "https://sit.patentcloud.com/dd/portal";
-                domain = "https://sit.patentcloud.com/";
+                domain = "https://sit.patentcloud.com";
                 break;
             case "Stage":
                 url = "https://stage.patentcloud.com/dd/portal";
-                domain = "https://stage.patentcloud.com/";
+                domain = "https://stage.patentcloud.com";
                 break;
             case "Production":
                 url = "https://app.patentcloud.com/dd/portal";
-                domain = "https://app.patentcloud.com/";
+                domain = "https://app.patentcloud.com";
                 break;
             default:
                 break;
@@ -116,6 +116,7 @@ public class MainPage extends BasePage {
 
     protected void resetVars() {
         numberOfPatents = -1;
+        numberOfCompanies = -1;
     }
 
     @Override
@@ -128,6 +129,7 @@ public class MainPage extends BasePage {
 
     public void isOnDDPortal() {
         resetVars();
+        recordNumberOfCompanies();
         if (op.isExist(getElement("PortalIndicator"))) return;
         else throw new RuntimeException("not on dd portal");
     }
@@ -263,6 +265,74 @@ public class MainPage extends BasePage {
                 }
             }
         }
+    }
+
+    public void rankByValidPatents() {
+        op.selectDropdownMenuOptionByValue(getElement("RankingSelect"), "activePatentCount");
+        waitForRanking();
+        compareNumberOfCompanies();
+    }
+
+    public void rankByHighValuePatents() {
+        op.selectDropdownMenuOptionByValue(getElement("RankingSelect"), "highValuePatentCount");
+        waitForRanking();
+        compareNumberOfCompanies();
+    }
+
+    public void rankByPatentsFiled() {
+        op.selectDropdownMenuOptionByValue(getElement("RankingSelect"), "recentlyAppliedPatentCount");
+        waitForRanking();
+        compareNumberOfCompanies();
+    }
+
+    public void rankByPatents() {
+        op.selectDropdownMenuOptionByValue(getElement("RankingSelect"), "categoryPatentCount");
+        waitForRanking();
+        compareNumberOfCompanies();
+    }
+
+    protected void recordNumberOfCompanies() {
+        List<WebElement> list = op.findElements(getElement("CompanyList"));
+        numberOfCompanies = list.size();
+    }
+
+    protected void compareNumberOfCompanies() {
+        List<WebElement> list = op.findElements(getElement("CompanyList"));
+        if (list.size() != numberOfCompanies) throw new RuntimeException("Number of companies not matched: " + list.size() + " != " + numberOfCompanies);
+    }
+
+    protected void waitForRanking() {
+        Set<String> set = new HashSet<>(){{
+            add(domain + "/dd-api/portal");
+            add(domain + "/dd-api/portal/company");
+        }};
+        waitForRequests(set);
+    }
+
+    protected void waitForRequests(Set<String> requests) {
+
+        int retry = 0, maxRetry = 20, millis = 6000;
+        while (requests.size() > 0 && retry++ < maxRetry) {
+
+            List<Map<String, String>> logs = op.getAllResponseUrlsFromLoggingPrefs();
+            for (Map<String, String> log : logs) {
+
+                String url = log.get("url"), status = log.get("status");
+                if (url.contains("patentcloud")) System.out.println(url);
+
+                url = url.replaceAll("\\?.*", "");
+
+                if (requests.contains(url)) {
+                    System.out.println("==> " + url + " status = " + status);
+                    if (status.equals("200")) requests.remove(url);
+                    else throw new RuntimeException("request " + url + "return status " + status);
+                }
+            }
+            op.sleep(millis);
+        }
+
+        if (requests.size() > 0) throw new RuntimeException("Cannot get response for: " + Arrays.toString(requests.toArray()) + " after " + maxRetry * millis / 1000 + " sec");
+
     }
 
 }

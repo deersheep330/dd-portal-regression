@@ -3,6 +3,22 @@ Feature: Portal Test
     Background: On DD Portal
         When navigate to dd portal
 
+    Scenario: Rank By Valid Patents
+        Given on dd portal
+        Then rank by valid patents
+
+    Scenario: Rank By High Value Patents
+        Given on dd portal
+        Then rank by high value patents
+
+    Scenario: Rank By Patents Filed
+        Given on dd portal
+        Then rank by patents filed
+
+    Scenario: Rank By Patents
+        Given on dd portal
+        Then rank by patents
+
     Scenario: Test First Company
         Given on dd portal
         Then click first company
