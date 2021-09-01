@@ -4,6 +4,9 @@ import automation.utility.Utility;
 import deersheep.automation.pageobject.BasePage;
 import deersheep.automation.utility.PropertiesTool;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
 
 public class MainPage extends BasePage {
 
@@ -56,6 +59,8 @@ public class MainPage extends BasePage {
         addElement("UltimateParent", "//*[contains(@class, 'collapse') and contains(@class, 'show')]//*[contains(@class, 'ultimateParent')]");
         addElement("CompanyList", "//*[contains(@class, 'portalCompanyList__column--rank')]/label[contains(text(), '.')]");
         addElement("CollapseButton", "//*[contains(@class, 'portalCompanyList__column--collapseIcon')]//span[not(contains(@style, 'none'))]//*[name()='svg']");
+        addElement("UnexpandedCollapseButton", "//*[contains(@class, 'portalCompanyList__column--collapseIcon')]//span[not(contains(@style, 'none'))]//*[name()='svg' and contains(@class, 'down')]");
+        addElement("ExpandedCollapseButton", "//*[contains(@class, 'portalCompanyList__column--collapseIcon')]//span[not(contains(@style, 'none'))]//*[name()='svg' and contains(@class, 'up')]");
 
         addElement("RankingSelect", "//*[contains(@class, 'portalSelector')]//select");
         // value = categoryPatentCount
@@ -82,6 +87,7 @@ public class MainPage extends BasePage {
         addElement("SampleReportTabToggle", "(//*[contains(@class, 'portalCompanyCollapaseBlock__header__title')])[2]");
 
         addElement("ViewReport", "//*[contains(text(), 'View Report')]");
+        addElement("ReportTitle", "//*[@id='dummy-header-title']");
 
         addElement("Categories", "//*[contains(@class, 'portalCompanyDetailTable__button')]");
 
@@ -147,6 +153,53 @@ public class MainPage extends BasePage {
     public boolean alreadyLogin() {
         if (op.isExist(getElement("AlreadyLoginIndicator"))) return true;
         else return false;
+    }
+
+    public void viewReport() {
+        op.clickAndWait(getElement("ViewReport"), getElement("ReportTitle"));
+    }
+
+    public void clickFirstCompany() {
+        return;
+    }
+
+    public void clickFirstUltimateParent() {
+        if (op.isExist(getElement("UltimateParent"))) {
+            op.click(getElement("UltimateParent"));
+        } else if (op.isExist(getElement("CollapseButton"))) {
+            List<WebElement> list = op.findElements(getElement("CollapseButton"));
+            if (list.size() > 1) {
+                for (int i = 1; i < list.size() - 1; i++) {
+                    list.get(i).click();
+                    op.sleep(3000);
+                    if (op.isExist(getElement("UltimateParent"))) {
+                        op.click(getElement("UltimateParent"));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public void clickLastCompany() {
+        List<WebElement> list = op.findElements(getElement("CompanyList"));
+        list.get(list.size() - 1).click();
+    }
+
+    public void clickLastUltimateParent() {
+        if (op.isExist(getElement("CollapseButton"))) {
+            List<WebElement> list = op.findElements(getElement("CollapseButton"));
+            if (list.size() > 1) {
+                for (int i = list.size() - 1; i >= 0; i--) {
+                    list.get(i).click();
+                    op.sleep(3000);
+                    if (op.isExist(getElement("UltimateParent"))) {
+                        op.click(getElement("UltimateParent"));
+                        break;
+                    }
+                }
+            }
+        }
     }
 
 }

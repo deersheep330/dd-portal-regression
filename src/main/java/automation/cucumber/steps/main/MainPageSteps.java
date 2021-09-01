@@ -18,13 +18,26 @@ public class MainPageSteps extends BaseSteps {
     }
 
     @Then("login")
-    public void login() {
-        mainPage.login();
-    }
+    public void login() { mainPage.login(); }
 
     @Then("logout")
     public void logout() {
         mainPage.logout();
     }
+
+    @Then("click first company")
+    public void click_first_company() { mainPage.clickFirstCompany(); }
+
+    @Then("click first ultimate parent")
+    public void click_first_ultimate_parent() { mainPage.clickFirstUltimateParent(); }
+
+    @Then("click last company")
+    public void click_last_company() { mainPage.clickLastCompany(); }
+
+    @Then("click last ultimate parent")
+    public void click_last_ultimate_parent() { mainPage.clickLastUltimateParent(); }
+
+    @Then("view report")
+    public void view_report() { mainPage.viewReport(); }
 
 }
