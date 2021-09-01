@@ -19,6 +19,11 @@ Feature: Portal Test
         Given on dd portal
         Then rank by patents
 
+    Scenario: Change Filters
+        Given on dd portal
+        Then change filters
+        Then view report
+
     Scenario: Test First Company
         Given on dd portal
         Then click first company

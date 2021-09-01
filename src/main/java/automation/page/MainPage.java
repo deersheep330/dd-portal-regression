@@ -78,14 +78,14 @@ public class MainPage extends BasePage {
         addElement("RankingNumbers", "//*[contains(@class, 'portalCompanyList__body--dynamic')]/div/*[contains(@class, 'portalCompanyList__row')]//*[contains(@class, 'portalCompanyList__column')][1]//label");
 
         addElement("FilterButton", "//*[contains(@class, 'portalFilterButton')]//*[contains(@i18n-txt, 'due.chartcommon.filter')]");
-        addElement("ParentCompany", "//form//label[contains(text(), 'Parent company')]");
-        addElement("Subsidiary", "//form//label[contains(text(), 'Subsidiary')]");
-        addElement("IndependentCompany", "//form//label[contains(text(), 'Independent company')]");
-        addElement("SEPOwner", "//form//label[contains(text(), 'SEP Owner')]");
-        addElement("3GPPMember", "//form//label[contains(text(), '3GPP Member')]");
-        addElement("LargerThanZero", "//form//label[contains(text(), '>0%')]");
-        addElement("LargerThanTwentyFive", "//form//label[contains(text(), '>25%')]");
-        addElement("ClearPercentage", "//form//span[contains(@i18n-txt, 'due.chart.clear') and not(contains(@style, 'none'))]");
+        addElement("ParentCompany", "//div[contains(@class, 'show')]//form//label[contains(text(), 'Parent company')]");
+        addElement("Subsidiary", "//div[contains(@class, 'show')]//form//label[contains(text(), 'Subsidiary')]");
+        addElement("IndependentCompany", "//div[contains(@class, 'show')]//form//label[contains(text(), 'Independent company')]");
+        addElement("SEPOwner", "//div[contains(@class, 'show')]//form//label[contains(text(), 'SEP Owner')]");
+        addElement("3GPPMember", "//div[contains(@class, 'show')]//form//label[contains(text(), '3GPP Member')]");
+        addElement("LargerThanZero", "//div[contains(@class, 'show')]//form//label[contains(text(), '>0%')]");
+        addElement("LargerThanTwentyFive", "//div[contains(@class, 'show')]//form//label[contains(text(), '>25%')]");
+        addElement("ClearPercentage", "//div[contains(@class, 'show')]//form//span[contains(@i18n-txt, 'due.chart.clear') and not(contains(@style, 'none'))]");
         addElement("FilterSubmit", "//*[contains(@i18n-txt, 'due.button.submit') and contains(@class, 'portalFilterButton')]");
 
         addElement("CompanyTabShow", "//*[@id='accordion-1-detail-table' and not(contains(@style, 'none'))]");
@@ -325,6 +325,27 @@ public class MainPage extends BasePage {
                 prev = current;
             }
         }
+    }
+
+    public void changeFilters() {
+        op.clickAndWait(getElement("FilterButton"), getElement("ParentCompany"));
+        op.click(getElement("ParentCompany"));
+        op.click(getElement("Subsidiary"));
+        op.click(getElement("IndependentCompany"));
+        op.click(getElement("SEPOwner"));
+        op.click(getElement("3GPPMember"));
+        op.clickAndWait(getElement("LargerThanZero"), getElement("ClearPercentage"));
+        op.clickAndWait(getElement("LargerThanTwentyFive"), getElement("ClearPercentage"));
+        op.clickAndWaitUntilDisappear(getElement("ClearPercentage"), getElement("ClearPercentage"));
+        op.clickAndWaitUntilDisappear(getElement("FilterSubmit"), getElement("ParentCompany"));
+        waitForFiltering();
+    }
+
+    public void waitForFiltering() {
+        Set<String> set = new HashSet<>(){{
+            add(domain + "/dd-api/portal");
+        }};
+        waitForRequests(set);
     }
 
     protected void waitForRequests(Set<String> requests) {

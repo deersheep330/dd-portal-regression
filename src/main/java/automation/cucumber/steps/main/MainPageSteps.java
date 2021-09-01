@@ -37,6 +37,9 @@ public class MainPageSteps extends BaseSteps {
     @Then("rank by patents")
     public void rank_by_patents() { mainPage.rankByPatents(); }
 
+    @Then("change filters")
+    public void change_filters() { mainPage.changeFilters(); }
+
     @Then("click first company")
     public void click_first_company() { mainPage.clickFirstCompany(); }
 
