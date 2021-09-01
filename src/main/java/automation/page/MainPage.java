@@ -21,6 +21,10 @@ public class MainPage extends BasePage {
     protected List<Integer> patentAssetsSummaryNumbers;
     protected List<Integer> techAndPatentSummaryNumbers;
 
+    protected List<Integer> numberOfValidPatents;
+    protected List<Integer> numberOfHighValuePatents;
+    protected List<Integer> mainTechFieldNumbers;
+
     public MainPage(WebDriver driver) {
 
         super(driver);
@@ -97,9 +101,17 @@ public class MainPage extends BasePage {
         addElement("NumberOfPatents", "(//*[contains(@class, 'portalNumberLabel__number')])[1]");
         addElement("AllFields", "//*[contains(@class, 'portalCompanyDetailTable') and contains(text(), 'All fields')]");
 
+        addElement("NumberOfValidPatents", "(//*[contains(@class, 'portalDescription__number')])[1]");
+        addElement("NumberOfHighValuePatents", "(//*[contains(@class, 'portalDescription__number')])[2]");
+        addElement("MainTechFieldNumbers", "(//*[contains(@class, 'portalTechField__number')])");
+
         addElement("ReportTitle", "//*[@id='dummy-header-title']");
         addElement("PatentAssetsSummaryNumbers", "//*[contains(@class, 'patent-asset-block')]//b");
         addElement("TechAndPatentSummaryNumbers", "//*[contains(@class, 'tech-and-patent-block')]//b");
+        addElement("ValidPatentsNumbers", "//*[contains(@class, 'table__body__row')]//b");
+        addElement("HighValuePatentsNumbers", "//*[@id='patent-asset-block-collapse']//*[contains(@class, 'table__body__description')]//b");
+        addElement("TechAndPatentTab", "//*[@i18n-txt='due.report.topic2']");
+        addElement("MainTechFieldsNumbers", "//*[contains(@class, 'techAndPatentCount__header')]//b");
 
         addElement("Categories", "//*[contains(@class, 'portalCompanyDetailTable__button')]");
 
