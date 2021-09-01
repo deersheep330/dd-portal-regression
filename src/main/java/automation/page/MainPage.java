@@ -7,6 +7,8 @@ import deersheep.automation.utility.PropertiesTool;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainPage extends BasePage {
@@ -16,6 +18,8 @@ public class MainPage extends BasePage {
     protected String domain = "";
 
     protected int numberOfPatents = -1;
+    protected List<Integer> patentAssetsSummaryNumbers;
+    protected List<Integer> techAndPatentSummaryNumbers;
 
     public MainPage(WebDriver driver) {
 
@@ -92,7 +96,10 @@ public class MainPage extends BasePage {
         addElement("ViewReport", "//*[contains(text(), 'View Report')]");
         addElement("NumberOfPatents", "(//*[contains(@class, 'portalNumberLabel__number')])[1]");
         addElement("AllFields", "//*[contains(@class, 'portalCompanyDetailTable') and contains(text(), 'All fields')]");
+
         addElement("ReportTitle", "//*[@id='dummy-header-title']");
+        addElement("PatentAssetsSummaryNumbers", "//*[contains(@class, 'patent-asset-block')]//b");
+        addElement("TechAndPatentSummaryNumbers", "//*[contains(@class, 'tech-and-patent-block')]//b");
 
         addElement("Categories", "//*[contains(@class, 'portalCompanyDetailTable__button')]");
 
@@ -165,15 +172,54 @@ public class MainPage extends BasePage {
         else return false;
     }
 
-    public void viewReport() {
+    protected List<Integer> _parseNumbers(String target) {
+        op.waitFor(getElement(target));
+        List<WebElement> elements = op.findElements(getElement(target));
+        List<Integer> list = new ArrayList<>();
+        for (WebElement element : elements) {
+            String[] arr = element.getText().split(" ");
+            for (String s : arr) {
+                Integer _int = NumberTool.parseIntFromString(s);
+                if (_int != null) list.add(_int);
+            }
+        }
+        return list;
+    }
+
+    protected void recordNumberOfPatents() {
         numberOfPatents = NumberTool.parseIntFromString(op.findElement(getElement("NumberOfPatents")).getText());
+        System.out.println(numberOfPatents);
+    }
+
+    protected void parsePatentAssetsSummaryNumbers() {
+        patentAssetsSummaryNumbers = _parseNumbers("PatentAssetsSummaryNumbers");
+        System.out.println(Arrays.toString(patentAssetsSummaryNumbers.toArray()));
+    }
+
+    protected void parseTechAndPatentSummaryNumbers() {
+        techAndPatentSummaryNumbers = _parseNumbers("TechAndPatentSummaryNumbers");
+        System.out.println(Arrays.toString(techAndPatentSummaryNumbers.toArray()));
+    }
+
+    protected void compareNumberOfPatents() {
+        if (numberOfPatents != patentAssetsSummaryNumbers.get(0)) {
+            throw new RuntimeException("Number of Patents not matched: " + numberOfPatents + " != " + patentAssetsSummaryNumbers.get(0));
+        }
+    }
+
+    public void viewReport() {
+        recordNumberOfPatents();
         op.clickAndWait(getElement("ViewReport"), getElement("ReportTitle"));
+        parsePatentAssetsSummaryNumbers();
+        compareNumberOfPatents();
     }
 
     public void viewAllFieldsReport() {
         op.click(getElement("AllFields"));
-        numberOfPatents = NumberTool.parseIntFromString(op.findElement(getElement("NumberOfPatents")).getText());
+        recordNumberOfPatents();
         op.clickAndWait(getElement("ViewReport"), getElement("ReportTitle"));
+        parsePatentAssetsSummaryNumbers();
+        compareNumberOfPatents();
     }
 
     public void clickFirstCompany() {
