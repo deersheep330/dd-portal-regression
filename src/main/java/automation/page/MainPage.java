@@ -75,7 +75,7 @@ public class MainPage extends BasePage {
         // value = highValuePatentCount
         // value = recentlyAppliedPatentCount
 
-        addElement("RankingNumbers", "//*[contains(@class, 'portalCompanyList__body--dynamic')]/div/*[contains(@class, 'portalCompanyList__row')]//*[contains(@class, 'portalCompanyList__column')][1]");
+        addElement("RankingNumbers", "//*[contains(@class, 'portalCompanyList__body--dynamic')]/div/*[contains(@class, 'portalCompanyList__row')]//*[contains(@class, 'portalCompanyList__column')][1]//label");
 
         addElement("FilterButton", "//*[contains(@class, 'portalFilterButton')]//*[contains(@i18n-txt, 'due.chartcommon.filter')]");
         addElement("ParentCompany", "//form//label[contains(text(), 'Parent company')]");
@@ -271,24 +271,28 @@ public class MainPage extends BasePage {
         op.selectDropdownMenuOptionByValue(getElement("RankingSelect"), "activePatentCount");
         waitForRanking();
         compareNumberOfCompanies();
+        checkRankingNumbersDescending();
     }
 
     public void rankByHighValuePatents() {
         op.selectDropdownMenuOptionByValue(getElement("RankingSelect"), "highValuePatentCount");
         waitForRanking();
         compareNumberOfCompanies();
+        checkRankingNumbersDescending();
     }
 
     public void rankByPatentsFiled() {
         op.selectDropdownMenuOptionByValue(getElement("RankingSelect"), "recentlyAppliedPatentCount");
         waitForRanking();
         compareNumberOfCompanies();
+        checkRankingNumbersDescending();
     }
 
     public void rankByPatents() {
         op.selectDropdownMenuOptionByValue(getElement("RankingSelect"), "categoryPatentCount");
         waitForRanking();
         compareNumberOfCompanies();
+        checkRankingNumbersDescending();
     }
 
     protected void recordNumberOfCompanies() {
@@ -309,6 +313,20 @@ public class MainPage extends BasePage {
         waitForRequests(set);
     }
 
+    protected void checkRankingNumbersDescending() {
+        List<WebElement> elements = op.findElements(getElement("RankingNumbers"));
+        int prev = 0, current = 0;
+        for (int i = 0; i < elements.size(); i++) {
+            if (i == 0) {
+                prev = NumberTool.parseIntFromString(elements.get(i).getText());
+            } else {
+                current = NumberTool.parseIntFromString(elements.get(i).getText());
+                if (current > prev) throw new RuntimeException("Numbers aren't descending: " + current + " > " + prev);
+                prev = current;
+            }
+        }
+    }
+
     protected void waitForRequests(Set<String> requests) {
 
         int retry = 0, maxRetry = 20, millis = 6000;
@@ -318,7 +336,7 @@ public class MainPage extends BasePage {
             for (Map<String, String> log : logs) {
 
                 String url = log.get("url"), status = log.get("status");
-                if (url.contains("patentcloud")) System.out.println(url);
+                if (url.contains(domain)) System.out.println(url);
 
                 url = url.replaceAll("\\?.*", "");
 
