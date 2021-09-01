@@ -2,6 +2,7 @@ package automation.page;
 
 import automation.utility.Utility;
 import deersheep.automation.pageobject.BasePage;
+import deersheep.automation.utility.NumberTool;
 import deersheep.automation.utility.PropertiesTool;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -13,6 +14,8 @@ public class MainPage extends BasePage {
     protected int defaultWaitTimeoutInSec = 120;
 
     protected String domain = "";
+
+    protected int numberOfPatents = -1;
 
     public MainPage(WebDriver driver) {
 
@@ -87,6 +90,7 @@ public class MainPage extends BasePage {
         addElement("SampleReportTabToggle", "(//*[contains(@class, 'portalCompanyCollapaseBlock__header__title')])[2]");
 
         addElement("ViewReport", "//*[contains(text(), 'View Report')]");
+        addElement("NumberOfPatents", "(//*[contains(@class, 'portalNumberLabel__number')])[1]");
         addElement("AllFields", "//*[contains(@class, 'portalCompanyDetailTable') and contains(text(), 'All fields')]");
         addElement("ReportTitle", "//*[@id='dummy-header-title']");
 
@@ -103,6 +107,10 @@ public class MainPage extends BasePage {
         addElement("GoToPartySearch", "//*[contains(@i18n-txt, 'dd.portal.button.patentsearch')]");
     }
 
+    protected void resetVars() {
+        numberOfPatents = -1;
+    }
+
     @Override
     public void navigate() {
         super.navigate();
@@ -112,6 +120,7 @@ public class MainPage extends BasePage {
     }
 
     public void isOnDDPortal() {
+        resetVars();
         if (op.isExist(getElement("PortalIndicator"))) return;
         else throw new RuntimeException("not on dd portal");
     }
@@ -157,11 +166,13 @@ public class MainPage extends BasePage {
     }
 
     public void viewReport() {
+        numberOfPatents = NumberTool.parseIntFromString(op.findElement(getElement("NumberOfPatents")).getText());
         op.clickAndWait(getElement("ViewReport"), getElement("ReportTitle"));
     }
 
     public void viewAllFieldsReport() {
         op.click(getElement("AllFields"));
+        numberOfPatents = NumberTool.parseIntFromString(op.findElement(getElement("NumberOfPatents")).getText());
         op.clickAndWait(getElement("ViewReport"), getElement("ReportTitle"));
     }
 
