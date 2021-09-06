@@ -21,9 +21,13 @@ public class MainPage extends BasePage {
     protected List<Integer> patentAssetsSummaryNumbers;
     protected List<Integer> techAndPatentSummaryNumbers;
 
-    protected List<Integer> numberOfValidPatents;
-    protected List<Integer> numberOfHighValuePatents;
-    protected List<Integer> mainTechFieldNumbers;
+    protected Set<Integer> numberOfValidPatents;
+    protected Set<Integer> numberOfHighValuePatents;
+    protected Set<Integer> mainTechFieldNumbers;
+
+    protected Set<Integer> numberOfValidPatentsInReport;
+    protected Set<Integer> numberOfHighValuePatentsInReport;
+    protected Set<Integer> mainTechFieldNumbersInReport;
 
     public MainPage(WebDriver driver) {
 
@@ -106,9 +110,14 @@ public class MainPage extends BasePage {
         addElement("MainTechFieldNumbers", "(//*[contains(@class, 'portalTechField__number')])");
 
         addElement("ReportTitle", "//*[@id='dummy-header-title']");
+        addElement("ReadMore", "//*[contains(text(), 'Read More')]");
         addElement("PatentAssetsSummaryNumbers", "//*[contains(@class, 'patent-asset-block')]//b");
         addElement("TechAndPatentSummaryNumbers", "//*[contains(@class, 'tech-and-patent-block')]//b");
+
         addElement("ValidPatentsNumbers", "//*[contains(@class, 'table__body__row')]//b");
+        addElement("NoActive", "//*[contains(text(), 'No active')]");
+        addElement("NoPending", "//*[contains(text(), 'No pending')]");
+
         addElement("HighValuePatentsNumbers", "//*[@id='patent-asset-block-collapse']//*[contains(@class, 'table__body__description')]//b");
         addElement("TechAndPatentTab", "//*[@i18n-txt='due.report.topic2']");
         addElement("MainTechFieldsNumbers", "//*[contains(@class, 'techAndPatentCount__header')]//b");
@@ -186,12 +195,12 @@ public class MainPage extends BasePage {
         else return false;
     }
 
-    protected List<Integer> _parseNumbers(String target) {
+    protected List<Integer> _parseNumbers(String target, String delimiter) {
         op.waitFor(getElement(target));
         List<WebElement> elements = op.findElements(getElement(target));
         List<Integer> list = new ArrayList<>();
         for (WebElement element : elements) {
-            String[] arr = element.getText().split(" ");
+            String[] arr = element.getText().split(delimiter);
             for (String s : arr) {
                 Integer _int = NumberTool.parseIntFromString(s);
                 if (_int != null) list.add(_int);
@@ -203,21 +212,80 @@ public class MainPage extends BasePage {
     protected void recordNumberOfPatents() {
         numberOfPatents = NumberTool.parseIntFromString(op.findElement(getElement("NumberOfPatents")).getText());
         System.out.println(numberOfPatents);
+        numberOfValidPatents = new HashSet<>(_parseNumbers("NumberOfValidPatents", "[ ()%]+"));
+        System.out.println(Arrays.toString(numberOfValidPatents.toArray()));
+        numberOfHighValuePatents = new HashSet<>(_parseNumbers("NumberOfHighValuePatents", "[ ()%]+"));
+        System.out.println(Arrays.toString(numberOfHighValuePatents.toArray()));
+        mainTechFieldNumbers = new HashSet<>(_parseNumbers("MainTechFieldNumbers", "[ ()%]+"));
+        System.out.println(Arrays.toString(mainTechFieldNumbers.toArray()));
     }
 
     protected void parsePatentAssetsSummaryNumbers() {
-        patentAssetsSummaryNumbers = _parseNumbers("PatentAssetsSummaryNumbers");
+
+        patentAssetsSummaryNumbers = _parseNumbers("PatentAssetsSummaryNumbers", " ");
         System.out.println(Arrays.toString(patentAssetsSummaryNumbers.toArray()));
+
+        List<Integer> tempList = _parseNumbers("ValidPatentsNumbers", "[ ()%]+");
+        numberOfValidPatentsInReport = new HashSet<>();
+        if (op.isExist(getElement("NoActive")) && op.isExist(getElement("NoPending"))) {
+            numberOfValidPatentsInReport.add(0);
+        } else if (op.isExist(getElement("NoActive")) || op.isExist(getElement("NoPending"))) {
+            numberOfValidPatentsInReport.add(tempList.get(0));
+            numberOfValidPatentsInReport.add(tempList.get(1));
+        } else {
+            numberOfValidPatentsInReport.add(tempList.get(0) + tempList.get(2));
+            numberOfValidPatentsInReport.add(tempList.get(1) + tempList.get(3));
+        }
+        System.out.println(Arrays.toString(numberOfValidPatentsInReport.toArray()));
+
+        try {
+            if (!op.isExist(getElement("HighValuePatentsNumbers"))) {
+                op.clickAndWait(getElement("ReadMore"), getElement("HighValuePatentsNumbers"));
+            }
+            numberOfHighValuePatentsInReport = new HashSet<>(_parseNumbers("HighValuePatentsNumbers", "[ ()%]+"));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            numberOfHighValuePatentsInReport = new HashSet<>(){{
+                add(0);
+            }};
+        }
+        System.out.println(Arrays.toString(numberOfHighValuePatentsInReport.toArray()));
     }
 
     protected void parseTechAndPatentSummaryNumbers() {
-        techAndPatentSummaryNumbers = _parseNumbers("TechAndPatentSummaryNumbers");
+        if (!op.isExist(getElement("TechAndPatentSummaryNumbers"))) {
+            op.clickAndWait(getElement("TechAndPatentTab"), getElement("TechAndPatentSummaryNumbers"));
+        }
+        techAndPatentSummaryNumbers = _parseNumbers("TechAndPatentSummaryNumbers", " ");
         System.out.println(Arrays.toString(techAndPatentSummaryNumbers.toArray()));
+        mainTechFieldNumbersInReport = new HashSet<>(_parseNumbers("MainTechFieldsNumbers", "[ ()%]+"));
+        System.out.println(Arrays.toString(mainTechFieldNumbersInReport.toArray()));
     }
 
     protected void compareNumberOfPatents() {
+        // topic 1
         if (numberOfPatents != patentAssetsSummaryNumbers.get(0)) {
             throw new RuntimeException("Number of Patents not matched: " + numberOfPatents + " != " + patentAssetsSummaryNumbers.get(0));
+        }
+        if (!numberOfValidPatents.containsAll(numberOfValidPatentsInReport)) {
+            throw new RuntimeException("Number of Valid Patents not matched: " +
+                    Arrays.toString(numberOfValidPatents.toArray()) +
+                    " != " +
+                    Arrays.toString(numberOfValidPatentsInReport.toArray()));
+        }
+        if (!numberOfHighValuePatents.containsAll(numberOfHighValuePatentsInReport)) {
+            throw new RuntimeException("Number of High Value Patents not matched: " +
+                    Arrays.toString(numberOfHighValuePatents.toArray()) +
+                    " != " +
+                    Arrays.toString(numberOfHighValuePatentsInReport.toArray()));
+        }
+
+        // topic 2
+        if (!mainTechFieldNumbers.containsAll(mainTechFieldNumbersInReport)) {
+            throw new RuntimeException("Main Tech Field Numbers not matched: " +
+                    Arrays.toString(mainTechFieldNumbers.toArray()) +
+                    " != " +
+                    Arrays.toString(mainTechFieldNumbersInReport.toArray()));
         }
     }
 
@@ -225,6 +293,7 @@ public class MainPage extends BasePage {
         recordNumberOfPatents();
         op.clickAndWait(getElement("ViewReport"), getElement("ReportTitle"));
         parsePatentAssetsSummaryNumbers();
+        parseTechAndPatentSummaryNumbers();
         compareNumberOfPatents();
     }
 
@@ -233,6 +302,7 @@ public class MainPage extends BasePage {
         recordNumberOfPatents();
         op.clickAndWait(getElement("ViewReport"), getElement("ReportTitle"));
         parsePatentAssetsSummaryNumbers();
+        parseTechAndPatentSummaryNumbers();
         compareNumberOfPatents();
     }
 
