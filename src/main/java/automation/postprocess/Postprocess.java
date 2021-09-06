@@ -17,10 +17,12 @@ public class Postprocess {
         Path junitReportFolder = Paths.get(System.getProperty("user.dir"), "build", "test-results", "junit");
         Set<String> junitReportSet = new HashSet<>(){{
             add("regression.PortalTest");
+            add("regression.LoginTest");
         }};
         for (String reportName : junitReportSet) {
             Path reportPath = Paths.get(junitReportFolder.toString(), reportName + ".xml");
             JunitReportTool.modifyJunitReportClassName(reportPath, "Portal Test", reportName);
+            JunitReportTool.modifyJunitReportClassName(reportPath, "Login Test", reportName);
         }
     }
 

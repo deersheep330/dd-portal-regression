@@ -4,11 +4,17 @@ import automation.utility.Utility;
 import deersheep.automation.pageobject.BasePage;
 import deersheep.automation.utility.NumberTool;
 import deersheep.automation.utility.PropertiesTool;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+import org.openqa.selenium.Point;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 public class MainPage extends BasePage {
 
@@ -57,6 +63,9 @@ public class MainPage extends BasePage {
 
         addElement("ChangeLang", "//*[@class='lang']");
         addElement("EnglishLang", "//*[@class='lang-option' and contains(text(), 'English')]");
+
+        addElement("Captcha", "//*[@id='kaptchaImage']");
+        addElement("CaptchaInput", "//*[contains(@class, 'form-group text-center')]//input[contains(@class, 'form-control')]");
 
         addElement("LoginButton", "(//*[@i18n-txt='login' or @vue-i18n-txt='login' or @i18n-txt='system.login' or @vue-i18n-txt='system.login'])[1]");
         addElement("LoginForm", "//*[contains(@class, 'login-box')]");
@@ -161,6 +170,49 @@ public class MainPage extends BasePage {
     public void changeLang() {
         op.clickAndWait(getElement("ChangeLang"), getElement("EnglishLang"));
         op.click(getElement("EnglishLang"));
+    }
+
+    public void tryToLogin() throws AWTException {
+        String account = "yangchiu+1@inquartik.com";
+        String fakePassword = "fakepassword";
+        String password = PropertiesTool.getProperty("environment", "password");
+        if (password.equals("account_password")) throw new RuntimeException("password should be provided");
+
+        op.clickAndWait(getElement("LoginButton"), getElement("LoginForm"));
+        op.sendText(getElement("LoginName"), account);
+        op.sendText(getElement("LoginPassword"), fakePassword);
+        do {
+            op.click(getElement("LoginSubmit"));
+        } while (!op.isExist(getElement("Captcha")));
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        long xOffset = (long) js.executeScript("return window.screenX + (window.outerWidth - window.innerWidth) / 2 - window.scrollX;");
+        long yOffset = (long) js.executeScript("return window.screenY + (window.outerHeight - window.innerHeight) - window.scrollY;");
+        System.out.println("x offset = " + xOffset);
+        System.out.println("y offset = " + yOffset);
+
+        WebElement captcha = op.findElement(getElement("Captcha"));
+        Point point = captcha.getLocation();
+        int x = point.getX();
+        System.out.println("Element's Position from left side " + x + " pixels.");
+        int y = point.getY();
+        System.out.println("Element's Position from top " + y + " pixels.");
+
+        int width = captcha.getSize().getWidth();
+        System.out.println("Image width Is " + width + " pixels");
+        int height = captcha.getSize().getHeight();
+        System.out.println("Image height Is " + height + " pixels");
+
+        Rectangle captureRect = new Rectangle(x + (int) xOffset, y + (int) yOffset, width, height);
+        BufferedImage screenFullImage = new Robot().createScreenCapture(captureRect);
+        try {
+            ImageIO.write(screenFullImage, "jpg", new File("captcha.jpg"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("A partial screenshot saved!");
+        op.sleep(2000);
     }
 
     public void login() {

@@ -5,6 +5,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+import java.awt.*;
+
 public class MainPageSteps extends BaseSteps {
 
     @When("navigate to dd portal")
@@ -16,6 +18,9 @@ public class MainPageSteps extends BaseSteps {
     public void on_dd_portal() {
         mainPage.isOnDDPortal();
     }
+
+    @Then("try to login")
+    public void try_to_login() throws AWTException { mainPage.tryToLogin(); }
 
     @Then("login")
     public void login() { mainPage.login(); }

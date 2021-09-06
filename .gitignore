@@ -18,3 +18,5 @@ archive
 # temp properties files
 buildNum.properties
 environment.properties
+
+*.jpg

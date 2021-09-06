@@ -95,6 +95,13 @@ task testPortal(type: Test) {
     include '**/PortalTestRunner.class'
 }
 
+task testLogin(type: Test) {
+    group = 'regression'
+    testLogging.showStandardStreams = true
+    ignoreFailures = true
+    include '**/LoginTestRunner.class'
+}
+
 task copyTestResults(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     main = 'automation.postprocess.Postprocess'
