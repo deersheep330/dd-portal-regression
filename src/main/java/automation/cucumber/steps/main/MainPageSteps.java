@@ -40,6 +40,15 @@ public class MainPageSteps extends BaseSteps {
     @Then("change filters")
     public void change_filters() { mainPage.changeFilters(); }
 
+    @Then("search")
+    public void search() { mainPage.search(); }
+
+    @Then("trending")
+    public void trending() { mainPage.trending(); }
+
+    @Then("party search")
+    public void party_search() { mainPage.partySearch(); }
+
     @Then("click first company")
     public void click_first_company() { mainPage.clickFirstCompany(); }
 

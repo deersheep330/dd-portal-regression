@@ -24,6 +24,20 @@ Feature: Portal Test
         Then change filters
         Then view report
 
+    Scenario: Search
+        Given on dd portal
+        Then search
+        Then view report
+
+    Scenario: Trending
+        Given on dd portal
+        Then trending
+        Then view report
+
+    Scenario: party search
+        Given on dd portal
+        Then party search
+
     Scenario: Test First Company
         Given on dd portal
         Then click first company

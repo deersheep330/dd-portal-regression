@@ -4,6 +4,7 @@ import automation.utility.Utility;
 import deersheep.automation.pageobject.BasePage;
 import deersheep.automation.utility.NumberTool;
 import deersheep.automation.utility.PropertiesTool;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -131,8 +132,10 @@ public class MainPage extends BasePage {
         addElement("SampleReports", "//*[contains(@class, 'portalSampleReport__link')]");
 
         addElement("SearchInput", "//*[contains(@class, 'companySearch__input')]");
+        addElement("Trending", "//*[contains(@class, 'portalQuickSearchOption') and contains(text(), 'SIERRA')]");
         addElement("SearchSubmit", "//*[contains(@class, 'companySearch__icon')]//*[name()='svg' and contains(@class, 'fa-search')]");
         addElement("GoToPartySearch", "//*[contains(@i18n-txt, 'dd.portal.button.patentsearch')]");
+        addElement("PartySearchInput", "//*[contains(@class, 'portalPartySearch__search')]//input");
     }
 
     protected void resetVars() {
@@ -426,6 +429,33 @@ public class MainPage extends BasePage {
     public void waitForFiltering() {
         Set<String> set = new HashSet<>(){{
             add(domain + "/dd-api/portal");
+        }};
+        waitForRequests(set);
+    }
+
+    public void trending() {
+        op.clickAndWait(getElement("SearchInput"), getElement("Trending"));
+        op.click(getElement("Trending"));
+        waitForSearchResults();
+    }
+
+    public void search() {
+        op.sendText(getElement("SearchInput"), "NUMEREX");
+        op.findElement(getElement("SearchInput")).sendKeys(Keys.RETURN);
+        waitForSearchResults();
+    }
+
+    public void partySearch() {
+        op.sendText(getElement("SearchInput"), "dummy");
+        op.findElement(getElement("SearchInput")).sendKeys(Keys.RETURN);
+        waitForSearchResults();
+        op.clickAndWait(getElement("GoToPartySearch"), getElement("PartySearchInput"));
+    }
+
+    protected void waitForSearchResults() {
+        Set<String> set = new HashSet<>(){{
+            add(domain + "/dd-api/portal");
+            add(domain + "/dd-api/portal/company");
         }};
         waitForRequests(set);
     }
