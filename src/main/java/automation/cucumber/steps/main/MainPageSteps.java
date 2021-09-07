@@ -6,6 +6,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.awt.*;
+import java.io.IOException;
 
 public class MainPageSteps extends BaseSteps {
 
@@ -20,7 +21,7 @@ public class MainPageSteps extends BaseSteps {
     }
 
     @Then("try to login")
-    public void try_to_login() throws AWTException { mainPage.tryToLogin(); }
+    public void try_to_login() throws AWTException, IOException { mainPage.tryToLogin(); }
 
     @Then("login")
     public void login() { mainPage.login(); }

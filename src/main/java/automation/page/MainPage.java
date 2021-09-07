@@ -7,10 +7,15 @@ import deersheep.automation.utility.PropertiesTool;
 import org.openqa.selenium.*;
 import org.openqa.selenium.Point;
 
-import javax.imageio.ImageIO;
+import javax.imageio.*;
+import javax.imageio.metadata.IIOInvalidTreeException;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -172,7 +177,7 @@ public class MainPage extends BasePage {
         op.click(getElement("EnglishLang"));
     }
 
-    public void tryToLogin() throws AWTException {
+    public void tryToLogin() throws AWTException, IOException {
         String account = "yangchiu+1@inquartik.com";
         String fakePassword = "fakepassword";
         String password = PropertiesTool.getProperty("environment", "password");
@@ -204,15 +209,69 @@ public class MainPage extends BasePage {
         System.out.println("Image height Is " + height + " pixels");
 
         Rectangle captureRect = new Rectangle(x + (int) xOffset, y + (int) yOffset, width, height);
-        BufferedImage screenFullImage = new Robot().createScreenCapture(captureRect);
-        try {
+        BufferedImage bufferedImage = new Robot().createScreenCapture(captureRect);
+        /*try {
             ImageIO.write(screenFullImage, "jpg", new File("captcha.jpg"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
-        }
+        }*/
+
+        saveImage(new File("captcha.jpg"), bufferedImage);
 
         System.out.println("A partial screenshot saved!");
-        op.sleep(2000);
+    }
+
+    private void saveImage(File output, BufferedImage bufferedImage) throws IOException {
+
+        final String formatName = "jpeg";
+
+        for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
+            ImageWriter writer = iw.next();
+            ImageWriteParam writeParam = writer.getDefaultWriteParam();
+            ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
+            IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
+            if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
+                continue;
+            }
+
+            setDPI(metadata);
+
+            final ImageOutputStream stream = ImageIO.createImageOutputStream(output);
+            try {
+                writer.setOutput(stream);
+                writer.write(metadata, new IIOImage(bufferedImage, null, metadata), writeParam);
+            } finally {
+                stream.close();
+            }
+            break;
+        }
+    }
+
+    private void setDPI(IIOMetadata metadata) throws IIOInvalidTreeException {
+
+        final String DENSITY_UNITS_NO_UNITS = "00";
+        final String DENSITY_UNITS_PIXELS_PER_INCH = "01";
+        final String DENSITY_UNITS_PIXELS_PER_CM = "02";
+
+        String metadataFormat = "javax_imageio_jpeg_image_1.0";
+        IIOMetadataNode root = new IIOMetadataNode(metadataFormat);
+        IIOMetadataNode jpegVariety = new IIOMetadataNode("JPEGvariety");
+        IIOMetadataNode markerSequence = new IIOMetadataNode("markerSequence");
+
+        IIOMetadataNode app0JFIF = new IIOMetadataNode("app0JFIF");
+        app0JFIF.setAttribute("majorVersion", "1");
+        app0JFIF.setAttribute("minorVersion", "2");
+        app0JFIF.setAttribute("thumbWidth", "0");
+        app0JFIF.setAttribute("thumbHeight", "0");
+        app0JFIF.setAttribute("resUnits", DENSITY_UNITS_PIXELS_PER_INCH);
+        app0JFIF.setAttribute("Xdensity", String.valueOf(96));
+        app0JFIF.setAttribute("Ydensity", String.valueOf(96));
+
+        root.appendChild(jpegVariety);
+        root.appendChild(markerSequence);
+        jpegVariety.appendChild(app0JFIF);
+
+        metadata.mergeTree(metadataFormat, root);
     }
 
     public void login() {
